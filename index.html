@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Runaway Login — an experimental interactive login experience.">
+  <title>RUNAWAY — Interactive Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="grid"></div>
+
+  <main class="scene">
+    <section class="login-shell" aria-labelledby="title">
+      <div class="eyebrow"><span class="status-dot"></span> AUTHENTICATION NODE / 01</div>
+      <h1 id="title">RUNAWAY<span>.</span></h1>
+      <p class="subtitle">Some buttons are harder to catch.</p>
+
+      <form id="loginForm" novalidate>
+        <label for="email">IDENTITY</label>
+        <div class="field-wrap">
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          <span class="field-line"></span>
+        </div>
+        <p class="error" id="emailError" aria-live="polite"></p>
+
+        <label for="password">ACCESS KEY</label>
+        <div class="field-wrap password-wrap">
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required minlength="4">
+          <button class="show-password" type="button" aria-label="Show password">SHOW</button>
+          <span class="field-line"></span>
+        </div>
+        <p class="error" id="passwordError" aria-live="polite"></p>
+
+        <div class="action-zone" id="actionZone">
+          <button id="runawayButton" class="runaway-button" type="submit">
+            <span class="button-label">LOGIN</span>
+            <span class="button-arrow">↗</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="hint" id="hint" aria-live="polite">Move closer. I dare you.</div>
+      <div class="success" id="success" role="status" aria-live="polite">
+        <span>✓</span> ACCESS GRANTED
+      </div>
+
+      <footer><span>RUNAWAY LAB</span><span>EXPERIMENT 001</span></footer>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
