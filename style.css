@@ -9,8 +9,16 @@
   --line: rgba(255,255,255,.11);
   --ease: cubic-bezier(.22, 1, .36, 1);
 }
-* { box-sizing: border-box; }
-html, body { min-height: 100%; }
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
   overflow-x: hidden;
@@ -18,47 +26,585 @@ body {
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
+
 body::before {
   content: "";
-  position: fixed; inset: 0; pointer-events: none; z-index: 10;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
   opacity: .035;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
 }
-.grid { position: fixed; inset: 0; opacity: .16; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(circle at center, black, transparent 78%); }
-.ambient { position: fixed; width: 40vw; height: 40vw; border-radius: 50%; filter: blur(90px); pointer-events: none; opacity: .18; }
-.ambient-one { background: var(--cyan); top: -22vw; left: -15vw; }
-.ambient-two { background: var(--violet); right: -20vw; bottom: -20vw; }
-.scene { min-height: 100vh; display: grid; place-items: center; padding: 32px 18px; }
-.login-shell {
-  position: relative; width: min(470px, 100%); padding: 42px;
-  border: 1px solid var(--line); border-radius: 28px;
-  background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
-  backdrop-filter: blur(24px); box-shadow: 0 30px 100px rgba(0,0,0,.55), inset 0 1px rgba(255,255,255,.07);
+
+/* Background grid */
+.grid {
+  position: fixed;
+  inset: 0;
+  opacity: .16;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at center, black, transparent 78%);
 }
-.login-shell::after { content: ""; position:absolute; inset: 0; border-radius: inherit; pointer-events:none; box-shadow: inset 0 0 70px rgba(104,244,255,.025); }
-.eyebrow { color: var(--muted); font: 600 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .18em; display:flex; align-items:center; gap:9px; }
-.status-dot { width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow: 0 0 14px var(--cyan); }
-h1 { margin: 28px 0 4px; font-size: clamp(3.5rem, 13vw, 6rem); line-height: .82; letter-spacing: -.075em; font-weight: 750; }
-h1 span { color: var(--cyan); }
-.subtitle { margin: 18px 0 38px; color: var(--muted); font-size: 14px; }
-label { display:block; margin: 22px 0 9px; color:#9ba4b4; font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:.15em; }
-.field-wrap { position:relative; }
-input { width:100%; border:0; outline:0; background:transparent; color:var(--text); padding: 12px 0 14px; font-size:16px; }
-input::placeholder { color:#4f5868; }
-.field-line { display:block; height:1px; background:var(--line); transition:.35s var(--ease); }
-.field-wrap:focus-within .field-line { background:linear-gradient(90deg,var(--cyan),var(--violet)); box-shadow:0 0 12px rgba(104,244,255,.25); }
-.password-wrap input { padding-right:55px; }
-.show-password { position:absolute; right:0; top:8px; border:0; background:none; color:#6d7687; font:700 9px ui-monospace, monospace; letter-spacing:.12em; cursor:pointer; padding:5px; }
-.show-password:hover, .show-password:focus-visible { color:var(--cyan); }
-.error { min-height:14px; margin:7px 0 -8px; color:var(--danger); font-size:11px; }
-.action-zone { position:relative; height:78px; margin-top:20px; display:flex; align-items:center; justify-content:center; }
-.runaway-button { position:relative; min-width:150px; height:48px; padding:0 20px; border:1px solid rgba(104,244,255,.32); border-radius:999px; background:rgba(104,244,255,.08); color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:18px; font:800 11px ui-monospace, monospace; letter-spacing:.16em; transition: transform .32s var(--ease), background .25s, border-color .25s, box-shadow .25s; }
-.runaway-button:hover, .runaway-button:focus-visible { background:rgba(104,244,255,.14); border-color:rgba(104,244,255,.7); box-shadow:0 0 35px rgba(104,244,255,.13); outline:none; }
-.button-arrow { color:var(--cyan); font-size:16px; }
-.hint { min-height:22px; text-align:center; color:#596274; font:500 10px ui-monospace, monospace; letter-spacing:.08em; transition:color .2s; }
-.success { display:none; margin-top:18px; padding:13px; border:1px solid rgba(104,244,255,.25); border-radius:12px; text-align:center; color:var(--cyan); font:700 11px ui-monospace, monospace; letter-spacing:.14em; animation: reveal .55s var(--ease); }
-.success span { margin-right:7px; }
-footer { display:flex; justify-content:space-between; margin-top:36px; color:#454d5b; font:600 8px ui-monospace, monospace; letter-spacing:.12em; }
-@keyframes reveal { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-@media (max-width: 520px) { .scene { padding:16px; } .login-shell { padding:30px 24px; border-radius:22px; } h1 { margin-top:22px; } .action-zone { height:74px; } }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior:auto !important; transition-duration:.01ms !important; animation-duration:.01ms !important; } .runaway-button { transform:none !important; } }
+
+/* Ambient lighting */
+.ambient {
+  position: fixed;
+  width: 40vw;
+  height: 40vw;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  opacity: .18;
+}
+
+.ambient-one {
+  background: var(--cyan);
+  top: -22vw;
+  left: -15vw;
+}
+
+.ambient-two {
+  background: var(--violet);
+  right: -20vw;
+  bottom: -20vw;
+}
+
+/* Main scene */
+.scene {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 32px 18px;
+}
+
+/* Login card */
+.login-shell {
+  position: relative;
+  width: min(470px, 100%);
+  max-width: 470px;
+
+  /* Responsive padding */
+  padding: clamp(28px, 5vw, 42px);
+
+  border: 1px solid var(--line);
+  border-radius: 28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.018)
+    );
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.55),
+    inset 0 1px rgba(255,255,255,.07);
+
+  /* Prevent accidental horizontal overflow */
+  overflow: hidden;
+}
+
+.login-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 70px rgba(104,244,255,.025);
+}
+
+/* Eyebrow */
+.eyebrow {
+  color: var(--muted);
+  font: 600 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .18em;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  min-width: 0;
+}
+
+.status-dot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 14px var(--cyan);
+}
+
+/* =========================================================
+   RUNAWAY TITLE
+   ========================================================= */
+
+h1 {
+  /*
+    IMPORTANT:
+    The old 13vw sizing allowed the heading to become
+    larger than the card.
+
+    This version keeps the title large but bounded.
+  */
+  margin: 28px 0 4px;
+
+  /*
+    4.4rem = 70.4px maximum.
+    This is large enough for desktop while still fitting
+    comfortably inside the 470px card.
+  */
+  font-size: clamp(2.8rem, 9vw, 4.4rem);
+
+  line-height: .82;
+
+  /*
+    Slightly tighter tracking gives the word more room.
+  */
+  letter-spacing: -.075em;
+
+  font-weight: 750;
+
+  /*
+    Never allow the word to wrap into multiple lines.
+  */
+  white-space: nowrap;
+
+  /*
+    Make sure the heading participates correctly in the
+    card's available width.
+  */
+  max-width: 100%;
+
+  /*
+    Prevent intrinsic text sizing from forcing overflow.
+  */
+  width: 100%;
+}
+
+h1 span {
+  color: var(--cyan);
+}
+
+/* Subtitle */
+.subtitle {
+  margin: 18px 0 38px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Labels */
+label {
+  display: block;
+  margin: 22px 0 9px;
+  color: #9ba4b4;
+
+  font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .15em;
+}
+
+/* Inputs */
+.field-wrap {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+
+  border: 0;
+  outline: 0;
+  background: transparent;
+
+  color: var(--text);
+
+  padding: 12px 0 14px;
+
+  font-size: 16px;
+}
+
+input::placeholder {
+  color: #4f5868;
+}
+
+.field-line {
+  display: block;
+  height: 1px;
+  background: var(--line);
+  transition: .35s var(--ease);
+}
+
+.field-wrap:focus-within .field-line {
+  background: linear-gradient(
+    90deg,
+    var(--cyan),
+    var(--violet)
+  );
+
+  box-shadow: 0 0 12px rgba(104,244,255,.25);
+}
+
+/* Password */
+.password-wrap input {
+  padding-right: 55px;
+}
+
+.show-password {
+  position: absolute;
+  right: 0;
+  top: 8px;
+
+  border: 0;
+  background: none;
+
+  color: #6d7687;
+
+  font: 700 9px ui-monospace, monospace;
+  letter-spacing: .12em;
+
+  cursor: pointer;
+  padding: 5px;
+}
+
+.show-password:hover,
+.show-password:focus-visible {
+  color: var(--cyan);
+}
+
+.error {
+  min-height: 14px;
+  margin: 7px 0 -8px;
+
+  color: var(--danger);
+  font-size: 11px;
+
+  /*
+    Prevent validation text from causing horizontal overflow.
+  */
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   RUNAWAY BUTTON
+   ========================================================= */
+
+.action-zone {
+  position: relative;
+
+  /*
+    Keep enough space for the button to move,
+    without affecting the card width.
+  */
+  width: 100%;
+  height: 78px;
+
+  margin-top: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: visible;
+}
+
+.runaway-button {
+  position: relative;
+
+  /*
+    Never let the button become wider than the card.
+  */
+  min-width: 150px;
+  max-width: 100%;
+
+  height: 48px;
+
+  padding: 0 20px;
+
+  border: 1px solid rgba(104,244,255,.32);
+  border-radius: 999px;
+
+  background: rgba(104,244,255,.08);
+  color: var(--text);
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+
+  font: 800 11px ui-monospace, monospace;
+  letter-spacing: .16em;
+
+  transition:
+    transform .32s var(--ease),
+    background .25s,
+    border-color .25s,
+    box-shadow .25s;
+}
+
+.runaway-button:hover,
+.runaway-button:focus-visible {
+  background: rgba(104,244,255,.14);
+  border-color: rgba(104,244,255,.7);
+
+  box-shadow:
+    0 0 35px rgba(104,244,255,.13);
+
+  outline: none;
+}
+
+.button-arrow {
+  flex: 0 0 auto;
+  color: var(--cyan);
+  font-size: 16px;
+}
+
+.button-label {
+  white-space: nowrap;
+}
+
+/* Hint */
+.hint {
+  min-height: 22px;
+
+  text-align: center;
+
+  color: #596274;
+
+  font: 500 10px ui-monospace, monospace;
+  letter-spacing: .08em;
+
+  transition: color .2s;
+
+  /*
+    Prevent long status messages from overflowing
+    on very small screens.
+  */
+  overflow-wrap: anywhere;
+}
+
+/* Success */
+.success {
+  display: none;
+
+  margin-top: 18px;
+  padding: 13px;
+
+  border: 1px solid rgba(104,244,255,.25);
+  border-radius: 12px;
+
+  text-align: center;
+
+  color: var(--cyan);
+
+  font: 700 11px ui-monospace, monospace;
+  letter-spacing: .14em;
+
+  animation: reveal .55s var(--ease);
+}
+
+.success span {
+  margin-right: 7px;
+}
+
+/* Footer */
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+
+  margin-top: 36px;
+
+  color: #454d5b;
+
+  font: 600 8px ui-monospace, monospace;
+  letter-spacing: .12em;
+}
+
+footer span {
+  white-space: nowrap;
+}
+
+/* Animation */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  .scene {
+    padding: 24px 16px;
+  }
+
+  .login-shell {
+    width: 100%;
+    border-radius: 24px;
+  }
+
+  h1 {
+    /*
+      Keep the title visually dominant,
+      but make it scale with smaller screens.
+    */
+    font-size: clamp(2.8rem, 12vw, 4.2rem);
+  }
+
+  .subtitle {
+    margin-bottom: 32px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+  .scene {
+    padding: 16px;
+  }
+
+  .login-shell {
+    width: 100%;
+    padding: 30px 24px;
+    border-radius: 22px;
+  }
+
+  h1 {
+    margin-top: 22px;
+
+    /*
+      On phones, scale according to viewport width.
+    */
+    font-size: clamp(2.55rem, 15vw, 3.8rem);
+
+    letter-spacing: -.07em;
+  }
+
+  .subtitle {
+    margin-top: 16px;
+    margin-bottom: 30px;
+  }
+
+  .action-zone {
+    height: 74px;
+  }
+
+  footer {
+    margin-top: 30px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .scene {
+    padding: 10px;
+  }
+
+  .login-shell {
+    padding: 26px 20px;
+    border-radius: 20px;
+  }
+
+  h1 {
+    font-size: 2.35rem;
+    letter-spacing: -.065em;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .runaway-button {
+    min-width: 140px;
+  }
+
+  footer {
+    font-size: 7px;
+  }
+}
+
+/* =========================================================
+   LANDSCAPE PHONES
+   ========================================================= */
+
+@media (max-height: 600px) and (orientation: landscape) {
+
+  .scene {
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+
+  .login-shell {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  h1 {
+    margin-top: 18px;
+    font-size: 3.2rem;
+  }
+
+  .subtitle {
+    margin-top: 12px;
+    margin-bottom: 20px;
+  }
+
+  label {
+    margin-top: 15px;
+  }
+
+  .action-zone {
+    height: 65px;
+    margin-top: 12px;
+  }
+
+  footer {
+    margin-top: 20px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+
+  .runaway-button {
+    transform: none !important;
+  }
+}
