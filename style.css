@@ -345,6 +345,9 @@ input::placeholder {
   font: 800 11px ui-monospace, monospace;
   letter-spacing: .16em;
 
+  /* Optimize rendering for frequent transform updates */
+  will-change: transform;
+
   transition:
     transform .32s var(--ease),
     background .25s,

@@ -12,6 +12,7 @@ const showPassword = document.querySelector('.show-password');
 let armed = true;
 let escapeCount = 0;
 let lastEscape = 0;
+let lastPointerMove = 0;
 
 const reduceMotion = window.matchMedia(
   '(prefers-reduced-motion: reduce)'
@@ -63,6 +64,12 @@ function moveButton(event) {
   }
 
   const now = performance.now();
+
+  // Throttle expensive DOM reads to ~60fps (16ms)
+  if (now - lastPointerMove < 16) {
+    return;
+  }
+  lastPointerMove = now;
 
   // Prevent the button from jittering continuously.
   if (now - lastEscape < 120) {
