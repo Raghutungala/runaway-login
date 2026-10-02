@@ -1,0 +1,3 @@
+## 2024-11-20 - Unthrottled High-Frequency Events vs Time-based Bailouts
+**Learning:** Adding a simple time-based bailout (like `if (now - lastEscape < 120) return;`) at the beginning of an event handler prevents logical execution, but the handler *itself* is still called on every single micro-movement. In pointer-heavy interfaces, this still causes hundreds of function calls per second, blocking the main thread from other layout operations.
+**Action:** Always throttle high-frequency events (like `pointermove`, `scroll`, `resize`) at the listener level using `requestAnimationFrame` *before* delegating to the business logic, ensuring the function is only called once per display frame.
