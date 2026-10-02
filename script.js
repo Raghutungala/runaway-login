@@ -200,9 +200,25 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// ⚡ Bolt: Added requestAnimationFrame throttle to reduce re-renders and
+// expensive layout recalculations (getBoundingClientRect) on rapid pointer moves.
+let pointerMoveTicking = false;
+let latestPointerEvent = null;
+
+function handlePointerMove(event) {
+  latestPointerEvent = event;
+  if (!pointerMoveTicking) {
+    window.requestAnimationFrame(() => {
+      moveButton(latestPointerEvent);
+      pointerMoveTicking = false;
+    });
+    pointerMoveTicking = true;
+  }
+}
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  handlePointerMove,
   { passive: true }
 );
 
