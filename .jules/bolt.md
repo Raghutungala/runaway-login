@@ -1,0 +1,3 @@
+## 2024-10-03 - High-frequency Pointer Events on Interactive Elements
+**Learning:** High-polling-rate mice (e.g., gaming mice at 1000Hz) can fire `pointermove` events up to 1000 times per second. Binding unthrottled DOM reads (like `getBoundingClientRect()`) to these events causes excessive CPU usage and potential main thread blocking, even if the DOM reads don't trigger layout thrashing.
+**Action:** Always throttle high-frequency input events (`pointermove`, `scroll`, `mousemove`) using `requestAnimationFrame` when the handler performs DOM reads or heavy math. This caps execution to the display refresh rate (typically 60-144Hz), eliminating up to 90% of redundant calculations without visual lag.
