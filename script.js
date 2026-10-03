@@ -200,9 +200,22 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let moveScheduled = false;
+
+// Optimize high-frequency pointermove events with rAF
+// to prevent excessive DOM reads (getBoundingClientRect) and math.
+function onPointerMove(event) {
+  if (moveScheduled) return;
+  moveScheduled = true;
+  requestAnimationFrame(() => {
+    moveButton(event);
+    moveScheduled = false;
+  });
+}
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  onPointerMove,
   { passive: true }
 );
 
