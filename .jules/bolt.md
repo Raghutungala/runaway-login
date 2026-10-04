@@ -1,0 +1,3 @@
+## 2024-11-20 - Pointer events layout thrashing anti-pattern
+**Learning:** Directly binding high-frequency events like `pointermove` to layout-reading functions (`getBoundingClientRect`) without throttling is a significant performance anti-pattern. High-polling rate mice (up to 1000Hz) can cause these listeners to fire up to 1000 times a second, leading to layout thrashing and massively spiking CPU usage.
+**Action:** Always throttle high-frequency layout-reading events (like `pointermove`, `scroll`, `resize`) using `requestAnimationFrame` to limit execution to the display's refresh rate (e.g., 60Hz), ensuring smooth visual performance and significantly reduced CPU load.

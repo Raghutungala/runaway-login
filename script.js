@@ -200,9 +200,23 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// ⚡ Bolt: Throttled pointermove to requestAnimationFrame to prevent layout thrashing
+// and high CPU usage from calling getBoundingClientRect up to 1000 times/sec
+let moveScheduled = false;
+let latestMoveEvent = null;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  function (event) {
+    latestMoveEvent = event;
+    if (!moveScheduled) {
+      moveScheduled = true;
+      requestAnimationFrame(() => {
+        moveButton.call(this, latestMoveEvent);
+        moveScheduled = false;
+      });
+    }
+  },
   { passive: true }
 );
 
