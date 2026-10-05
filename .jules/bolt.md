@@ -1,0 +1,3 @@
+## 2026-10-05 - [Layout Thrashing in High-Frequency pointermove]
+**Learning:** `moveButton` runs synchronously on `pointermove` (which fires up to 1000Hz on high-polling mice). It reads DOM layout (`getBoundingClientRect()`) right after potentially modifying DOM attributes (`button.style.transform`, `hint.textContent` in the same/previous frames). This forced synchronous layout recalculations (layout thrashing) multiple times per frame, severely degrading performance.
+**Action:** Throttle high-frequency event listeners (`pointermove`, `scroll`) that read and write to the DOM using `requestAnimationFrame`. Decouple logical position calculation from input event frequency to bound CPU load to the display refresh rate (~60Hz).
