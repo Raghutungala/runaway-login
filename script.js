@@ -200,9 +200,24 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let ticking = false;
+let latestEvent = null;
+
+// Throttle high-frequency pointermove events to the display refresh rate
+// to prevent layout thrashing from getBoundingClientRect reads after DOM writes.
+// We save the latestEvent so the position isn't stale when the frame fires.
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    latestEvent = event;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        moveButton.call(zone, latestEvent);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  },
   { passive: true }
 );
 
