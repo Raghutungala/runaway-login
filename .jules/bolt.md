@@ -1,0 +1,3 @@
+## 2024-05-24 - Layout Thrashing from High-Frequency Pointer Events
+**Learning:** Attaching `getBoundingClientRect()` inside a `pointermove` event listener causes layout thrashing and main-thread blocking, because `pointermove` fires much faster than the display refresh rate (e.g. up to 1000 times per second for some gaming mice). Doing this without throttling causes noticeable stutter and high CPU usage.
+**Action:** Always throttle high-frequency events (like `pointermove` or `scroll`) using `requestAnimationFrame` to limit layout calculations to the browser's paint cycle, especially when the event handler triggers reflow or calls layout APIs like `getBoundingClientRect`.

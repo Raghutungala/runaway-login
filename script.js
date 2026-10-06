@@ -200,9 +200,23 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// Throttle high-frequency pointer events to avoid layout
+// thrashing from getBoundingClientRect() inside moveButton.
+let moveTicking = false;
+let lastEvent = null;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    lastEvent = event;
+    if (!moveTicking) {
+      moveTicking = true;
+      requestAnimationFrame(() => {
+        moveButton(lastEvent);
+        moveTicking = false;
+      });
+    }
+  },
   { passive: true }
 );
 
