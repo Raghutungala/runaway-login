@@ -200,9 +200,27 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let moveTicking = false;
+let lastMoveEvent = null;
+
+// ⚡ Bolt: Throttled pointermove using requestAnimationFrame.
+// High-polling mice trigger this event very frequently.
+// Since moveButton calculates layout via getBoundingClientRect,
+// doing it too often causes layout thrashing.
+// Throttle limits the execution to the display's refresh rate
+// and ensures we always process the *latest* pointer position.
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    lastMoveEvent = event;
+    if (!moveTicking) {
+      window.requestAnimationFrame(() => {
+        moveButton(lastMoveEvent);
+        moveTicking = false;
+      });
+      moveTicking = true;
+    }
+  },
   { passive: true }
 );
 
