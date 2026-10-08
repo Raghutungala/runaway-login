@@ -200,9 +200,28 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let moveButtonRafId = null;
+
+// Throttling pointermove with requestAnimationFrame to prevent high-frequency layout thrashing
+// from getBoundingClientRect() calls in moveButton
+function throttledMoveButton(event) {
+  if (moveButtonRafId) {
+    return;
+  }
+
+  // Store the essential event properties since the event object might be reused/invalidated
+  const clientX = event.clientX;
+  const clientY = event.clientY;
+
+  moveButtonRafId = requestAnimationFrame(() => {
+    moveButtonRafId = null;
+    moveButton({ clientX, clientY });
+  });
+}
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  throttledMoveButton,
   { passive: true }
 );
 
