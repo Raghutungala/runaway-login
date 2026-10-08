@@ -1,0 +1,3 @@
+## 2026-10-08 - Layout Thrashing with Dynamic Elements
+**Learning:** Because the "runaway" button is constantly moving and its position cannot be reliably cached during CSS transitions, `getBoundingClientRect` must be used dynamically inside the `pointermove` handler. However, calling layout-reading methods on high-frequency events causes severe layout thrashing.
+**Action:** Always wrap high-frequency event handlers (like `pointermove` or `scroll`) in a throttle, such as `requestAnimationFrame`, especially when they contain synchronous layout reads like `getBoundingClientRect`.
