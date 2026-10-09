@@ -200,9 +200,23 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// Bolt: Throttle pointermove with requestAnimationFrame to prevent
+// excessive layout reads (getBoundingClientRect) and main thread blocking.
+let isTicking = false;
+let latestEvent = null;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    latestEvent = event;
+    if (!isTicking) {
+      window.requestAnimationFrame(() => {
+        moveButton(latestEvent);
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  },
   { passive: true }
 );
 

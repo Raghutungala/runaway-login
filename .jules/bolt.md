@@ -1,0 +1,3 @@
+## 2024-05-24 - Throttling High-Frequency Layout Reads
+**Learning:** `pointermove` events can fire at the monitor's polling rate (up to 1000Hz on gaming mice). Binding a function that reads layout properties like `getBoundingClientRect()` directly to `pointermove` forces the browser into a synchronous layout cycle, causing significant CPU waste and main thread blocking, even if the logic bails out early.
+**Action:** Always throttle continuous pointer/scroll events using `requestAnimationFrame` (with a ticking flag) or a timer-based throttle when those handlers need to read DOM layout properties.
