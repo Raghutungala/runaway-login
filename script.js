@@ -200,9 +200,21 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let isTicking = false;
+
+// ⚡ Bolt: Throttle pointermove to 60fps to prevent layout thrashing
+// from excessive getBoundingClientRect calls during rapid mouse movement.
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    if (!isTicking) {
+      window.requestAnimationFrame(() => {
+        moveButton(event);
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  },
   { passive: true }
 );
 
