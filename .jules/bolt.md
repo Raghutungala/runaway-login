@@ -1,0 +1,3 @@
+## 2024-05-24 - Avoiding Math.hypot in high-frequency pointer event listeners
+**Learning:** `Math.hypot` is surprisingly slow compared to calculating squared distances manually (`dx*dx + dy*dy`) because it has built-in overflow/underflow protection and calculates a square root. This can add up when used inside a hot loop or high-frequency event listener like `pointermove` where hundreds of distances are calculated per second.
+**Action:** When comparing distances in JavaScript for UI micro-interactions, especially in `pointermove` or `mousemove` handlers, always use squared distances instead of `Math.hypot` unless true Euclidean distance value is required.

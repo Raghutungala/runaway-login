@@ -81,13 +81,13 @@ function moveButton(event) {
   const buttonCenterY =
     buttonRect.top - zoneRect.top + buttonRect.height / 2;
 
-  const distance = Math.hypot(
-    pointerX - buttonCenterX,
-    pointerY - buttonCenterY
-  );
+  // ⚡ Bolt: Using squared distance instead of Math.hypot for performance in high-frequency events
+  const dx = pointerX - buttonCenterX;
+  const dy = pointerY - buttonCenterY;
+  const distanceSq = dx * dx + dy * dy;
 
-  // Activation radius.
-  if (distance > 105) {
+  // Activation radius (105 squared).
+  if (distanceSq > 11025) {
     return;
   }
 
@@ -135,13 +135,13 @@ function moveButton(event) {
     const candidateCenterY =
       zoneRect.height / 2 + candidateY;
 
-    const candidateDistance = Math.hypot(
-      pointerX - candidateCenterX,
-      pointerY - candidateCenterY
-    );
+    // ⚡ Bolt: Using squared distance instead of Math.hypot for performance in high-frequency events
+    const candDx = pointerX - candidateCenterX;
+    const candDy = pointerY - candidateCenterY;
+    const candidateDistanceSq = candDx * candDx + candDy * candDy;
 
-    if (candidateDistance > bestDistance) {
-      bestDistance = candidateDistance;
+    if (candidateDistanceSq > bestDistance) {
+      bestDistance = candidateDistanceSq;
       bestX = candidateX;
       bestY = candidateY;
     }
