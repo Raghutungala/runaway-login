@@ -200,9 +200,25 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// ⚡ Bolt: Throttled pointermove using requestAnimationFrame.
+// High polling rate devices trigger pointermove hundreds of times per second.
+// This throttle prevents layout thrashing by ensuring `moveButton`
+// (which calls getBoundingClientRect) only runs once per display frame.
+let moveTicking = false;
+let latestMoveEvent = null;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    latestMoveEvent = event;
+    if (!moveTicking) {
+      window.requestAnimationFrame(() => {
+        moveButton(latestMoveEvent);
+        moveTicking = false;
+      });
+      moveTicking = true;
+    }
+  },
   { passive: true }
 );
 
