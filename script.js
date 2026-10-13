@@ -200,9 +200,25 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let ticking = false;
+let latestEvent = null;
+
+// Throttle pointermove events with requestAnimationFrame
+// to prevent excessive layout thrashing from getBoundingClientRect
+function onPointerMove(event) {
+  latestEvent = event;
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      moveButton(latestEvent);
+      ticking = false;
+    });
+    ticking = true;
+  }
+}
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  onPointerMove,
   { passive: true }
 );
 
