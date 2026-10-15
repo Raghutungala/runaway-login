@@ -69,21 +69,16 @@ function moveButton(event) {
     return;
   }
 
-  const zoneRect = zone.getBoundingClientRect();
+  // Only read the button's layout for the initial distance check.
+  // This defers the expensive zone.getBoundingClientRect() until we actually need it.
   const buttonRect = button.getBoundingClientRect();
 
-  const pointerX = event.clientX - zoneRect.left;
-  const pointerY = event.clientY - zoneRect.top;
-
-  const buttonCenterX =
-    buttonRect.left - zoneRect.left + buttonRect.width / 2;
-
-  const buttonCenterY =
-    buttonRect.top - zoneRect.top + buttonRect.height / 2;
+  const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+  const buttonCenterY = buttonRect.top + buttonRect.height / 2;
 
   const distance = Math.hypot(
-    pointerX - buttonCenterX,
-    pointerY - buttonCenterY
+    event.clientX - buttonCenterX,
+    event.clientY - buttonCenterY
   );
 
   // Activation radius.
@@ -93,6 +88,12 @@ function moveButton(event) {
 
   escapeCount += 1;
   lastEscape = now;
+
+  // Pointer is within radius, now read the zone layout.
+  const zoneRect = zone.getBoundingClientRect();
+
+  const pointerX = event.clientX - zoneRect.left;
+  const pointerY = event.clientY - zoneRect.top;
 
   /*
    * Keep a generous invisible safety boundary.
