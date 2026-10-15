@@ -1,0 +1,3 @@
+## 2024-05-24 - Defer Layout Reads on High-Frequency Events
+**Learning:** Calling `getBoundingClientRect()` on container elements inside high-frequency event handlers like `pointermove` causes continuous unnecessary layout reads, even when the interaction doesn't require it. In `script.js`, `zone.getBoundingClientRect()` was being called on every `pointermove` before checking if the pointer was within the activation radius of the button.
+**Action:** Use global viewport coordinates (`event.clientX`/`clientY` vs `elementRect.left`/`top`) to calculate initial interaction radii. Defer expensive container layout reads (`getBoundingClientRect()`) until *after* the early return conditions are met.
