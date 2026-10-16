@@ -200,9 +200,24 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// ⚡ Bolt Performance Optimization:
+// Throttle the high-frequency pointermove event using requestAnimationFrame.
+// Modern mice can fire events at 1000Hz, leading to unnecessary calculations
+// and layout reads. We limit the processing to the screen's refresh rate.
+let isTicking = false;
+let latestEvent = null;
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    latestEvent = event;
+    if (!isTicking) {
+      window.requestAnimationFrame(() => {
+        moveButton(latestEvent);
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  },
   { passive: true }
 );
 
