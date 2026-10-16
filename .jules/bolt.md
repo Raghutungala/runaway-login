@@ -1,0 +1,3 @@
+## 2024-05-18 - Throttle high-frequency events with requestAnimationFrame
+**Learning:** In vanilla JS applications, attaching complex handlers directly to high-frequency events like `pointermove` or `scroll` can cause performance bottlenecks because they run faster than the display's refresh rate and can block the main thread.
+**Action:** Throttle high-frequency event handlers using `requestAnimationFrame` to limit execution to the screen refresh rate, especially when the handler reads layout properties or updates the DOM.
