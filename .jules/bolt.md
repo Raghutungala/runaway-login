@@ -1,0 +1,3 @@
+## 2025-02-12 - [Throttle high-frequency pointermove events with rAF]
+**Learning:** High-frequency mouse pointer events (like `pointermove`) can fire excessively (up to 1000 times per second), and if the handler performs synchronous DOM reads like `getBoundingClientRect()`, it causes high CPU load, layout thrashing, and potential jank.
+**Action:** Always throttle high-frequency events (like scroll or mouse movement) that read/write DOM layout properties. Using `requestAnimationFrame` ensures computations are limited to the display's actual refresh rate (typically 60-144 Hz), significantly reducing CPU overhead without sacrificing visual smoothness.
