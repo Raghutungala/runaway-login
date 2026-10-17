@@ -200,9 +200,21 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let ticking = false;
+
+// Optimize pointermove by using requestAnimationFrame to throttle execution
+// and prevent excessive synchronous DOM reads (getBoundingClientRect).
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        moveButton(event);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  },
   { passive: true }
 );
 
