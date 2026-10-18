@@ -200,11 +200,20 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
-zone.addEventListener(
-  'pointermove',
-  moveButton,
-  { passive: true }
-);
+let moveTicking = false;
+
+zone.addEventListener('pointermove', event => {
+  // Performance Optimization: Throttle un-throttled high-frequency events
+  // that can fire up to 1000Hz. This ensures layout reads (getBoundingClientRect)
+  // in `moveButton` happen at most once per display refresh rate.
+  if (!moveTicking) {
+    window.requestAnimationFrame(() => {
+      moveButton(event);
+      moveTicking = false;
+    });
+    moveTicking = true;
+  }
+}, { passive: true });
 
 
 /* ---------------------------------------
