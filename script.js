@@ -200,9 +200,21 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// ⚡ Bolt Performance: Throttle pointermove with requestAnimationFrame to prevent main thread layout thrashing on high-frequency DOM reads (getBoundingClientRect).
+let isTicking = false;
+let latestEvent = null;
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  function (event) {
+    latestEvent = event;
+    if (!isTicking) {
+      window.requestAnimationFrame(() => {
+        moveButton.call(this, latestEvent);
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  },
   { passive: true }
 );
 
