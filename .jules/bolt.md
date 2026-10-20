@@ -1,0 +1,4 @@
+## 2024-05-18 - Throttling High-Frequency Pointer Events
+
+**Learning:** Unthrottled `pointermove` events can execute over 120 times per second. If the event handler synchronously reads layout properties (like `getBoundingClientRect()`), it forces the browser to recalculate layouts constantly, leading to severe layout thrashing and increased CPU usage, even if the result isn't visually updated on every frame.
+**Action:** Always throttle high-frequency layout-reading events (like `scroll`, `resize`, or `pointermove`) using `requestAnimationFrame` to limit layout calculations to a maximum of once per visual frame (usually 60fps).

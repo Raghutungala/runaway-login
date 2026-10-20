@@ -200,9 +200,16 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let rafId;
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+    // Throttle the layout read/move execution to the animation frame
+    rafId = requestAnimationFrame(() => moveButton(event));
+  },
   { passive: true }
 );
 
