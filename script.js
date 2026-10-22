@@ -200,9 +200,30 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let moveTicking = false;
+let latestPointerEvent = null;
+
+/*
+ * ⚡ Bolt: Throttling the pointermove event using requestAnimationFrame.
+ * Raw pointermove events can fire at up to 1000Hz (gaming mice), but
+ * running layout recalculations (getBoundingClientRect) faster than 60Hz
+ * wastes CPU and causes layout thrashing.
+ *
+ * Expected Impact: Eliminates unthrottled DOM measurements, reducing main
+ * thread workload by up to 90%+ during rapid mouse movement over the zone.
+ */
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    latestPointerEvent = event;
+    if (!moveTicking) {
+      moveTicking = true;
+      requestAnimationFrame(() => {
+        moveButton(latestPointerEvent);
+        moveTicking = false;
+      });
+    }
+  },
   { passive: true }
 );
 
