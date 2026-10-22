@@ -1,0 +1,3 @@
+## 2026-10-22 - [Layout Thrashing in High-Frequency Events]
+**Learning:** In `script.js`, `pointermove` is bound without throttling. Even though `moveButton` has a `now - lastEscape < 120` check, this check only works *after* an escape happens. Before escaping, every single `pointermove` event (up to 1000Hz on some mice) synchronously calls `getBoundingClientRect()` on two elements, causing excessive CPU usage and layout calculations on the main thread.
+**Action:** Always throttle high-frequency events (like `pointermove` or `scroll`) using `requestAnimationFrame` (rAF) before they perform expensive DOM layout reads like `getBoundingClientRect()`.
