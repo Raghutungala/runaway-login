@@ -200,9 +200,23 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// ⚡ Bolt Optimization: Throttle pointermove events with requestAnimationFrame
+// This prevents excessive DOM reads (getBoundingClientRect) that can cause layout thrashing
+// by ensuring calculations only happen once per display frame (max ~60fps) rather than
+// at the mouse's polling rate (up to 1000hz).
+let ticking = false;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        moveButton(event);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  },
   { passive: true }
 );
 
