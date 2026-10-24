@@ -1,0 +1,3 @@
+## 2024-05-24 - Layout Thrashing on Pointer Events
+**Learning:** Unthrottled `pointermove` events (which can fire up to 1000 times per second on high polling rate mice) that trigger DOM measurements like `getBoundingClientRect()` cause severe layout thrashing and high CPU usage.
+**Action:** Always wrap high-frequency event handlers (like scroll or pointer move) that trigger layout reads/writes in a `requestAnimationFrame` throttle to synchronize execution with the browser's display frame rate.

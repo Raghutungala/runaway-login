@@ -200,9 +200,23 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let ticking = false;
+let pointerEvent = null;
+
+function onPointerMove(event) {
+  pointerEvent = event;
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      moveButton(pointerEvent);
+      ticking = false;
+    });
+    ticking = true;
+  }
+}
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  onPointerMove,
   { passive: true }
 );
 
