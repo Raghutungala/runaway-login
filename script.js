@@ -200,9 +200,26 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// Performance optimization: Throttle high-frequency pointermove events
+// using requestAnimationFrame to prevent layout thrashing from
+// getBoundingClientRect() calls in moveButton.
+let moveAnimationFrame = null;
+let lastPointerEvent = null;
+
+function handlePointerMove(event) {
+  lastPointerEvent = event;
+
+  if (moveAnimationFrame === null) {
+    moveAnimationFrame = requestAnimationFrame(() => {
+      moveButton(lastPointerEvent);
+      moveAnimationFrame = null;
+    });
+  }
+}
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  handlePointerMove,
   { passive: true }
 );
 
