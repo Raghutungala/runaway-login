@@ -1,0 +1,3 @@
+## 2024-05-18 - Throttle high-frequency pointermove events
+**Learning:** High-frequency events like `pointermove` or `mousemove` (which can fire up to 1000Hz on some gaming mice) can cause main-thread jank when they trigger synchronous layout queries like `getBoundingClientRect()`. In this interactive login experiment, the unthrottled pointermove listener was continuously recalculating layout and math distances.
+**Action:** Always throttle high-frequency layout-trigging events, preferably using `requestAnimationFrame`, to decouple the visual state computation from the pointer interrupt rate and keep it aligned with the display refresh rate (usually 60Hz).
