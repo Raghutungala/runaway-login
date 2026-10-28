@@ -200,9 +200,24 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let moveTicking = false;
+let lastMoveEvent = null;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    lastMoveEvent = event;
+    if (!moveTicking) {
+      window.requestAnimationFrame(() => {
+        // Optimization: Throttling high-frequency pointer events with requestAnimationFrame
+        // reduces synchronous DOM reads (getBoundingClientRect), preventing the main thread
+        // from blocking, especially with high polling rate mice (e.g., 1000Hz).
+        moveButton(lastMoveEvent);
+        moveTicking = false;
+      });
+      moveTicking = true;
+    }
+  },
   { passive: true }
 );
 
