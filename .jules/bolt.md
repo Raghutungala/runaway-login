@@ -1,0 +1,3 @@
+## 2024-05-15 - [Throttling Pointermove in Interactive Elements]
+**Learning:** Found a common frontend anti-pattern: calculating layout properties (`getBoundingClientRect`) synchronously inside a `pointermove` event handler without any throttling. High polling rate mice (e.g. 1000Hz gaming mice) can fire `pointermove` excessively, causing severe layout thrashing and CPU spikes on otherwise trivial interactions.
+**Action:** Always wrap unthrottled `pointermove` event handlers that perform layout reading or DOM manipulation in `requestAnimationFrame` to limit executions to the browser's refresh rate (e.g., 60 FPS).
