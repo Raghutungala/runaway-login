@@ -200,9 +200,20 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let moveTicking = false;
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  (event) => {
+    // ⚡ Bolt: Throttling pointermove event with requestAnimationFrame to prevent
+    // layout thrashing (getBoundingClientRect) on high polling rate devices.
+    if (!moveTicking) {
+      window.requestAnimationFrame(() => {
+        moveButton(event);
+        moveTicking = false;
+      });
+      moveTicking = true;
+    }
+  },
   { passive: true }
 );
 
