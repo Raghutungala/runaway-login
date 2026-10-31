@@ -200,9 +200,25 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// ⚡ Bolt: Throttle pointermove events with requestAnimationFrame to prevent
+// excessive synchronous layout calculations on high-polling-rate mice.
+let isTicking = false;
+let latestEvent = null;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    latestEvent = event;
+    if (!isTicking) {
+      window.requestAnimationFrame(() => {
+        if (latestEvent) {
+          moveButton(latestEvent);
+        }
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  },
   { passive: true }
 );
 
