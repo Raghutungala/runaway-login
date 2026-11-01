@@ -200,9 +200,27 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+// ⚡ Bolt Performance Optimization:
+// Problem: High-polling rate mice (1000Hz+) trigger pointermove hundreds of times per second.
+// Each trigger executes moveButton() which performs expensive DOM layout reads (getBoundingClientRect).
+// Solution: Throttle the event using requestAnimationFrame to cap executions to screen refresh rate (~60Hz).
+// Impact: Significantly reduces CPU usage and layout thrashing during mouse movement.
+let ticking = false;
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    if (!ticking) {
+      // Store necessary event properties to avoid issues with asynchronous event processing
+      const clientX = event.clientX;
+      const clientY = event.clientY;
+      window.requestAnimationFrame(() => {
+        // Pass a synthetic event object containing only the required coordinates
+        moveButton({ clientX, clientY });
+        ticking = false;
+      });
+      ticking = true;
+    }
+  },
   { passive: true }
 );
 
