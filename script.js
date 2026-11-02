@@ -200,9 +200,26 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let isTicking = false;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    if (!isTicking) {
+      // Synchronously extract coordinates to avoid context loss in async callback
+      const clientX = event.clientX;
+      const clientY = event.clientY;
+
+      window.requestAnimationFrame(() => {
+        // ⚡ Bolt: Throttled pointermove with rAF to prevent layout thrashing
+        // from rapid, synchronous getBoundingClientRect calls in moveButton.
+        moveButton({ clientX, clientY });
+        isTicking = false;
+      });
+
+      isTicking = true;
+    }
+  },
   { passive: true }
 );
 
