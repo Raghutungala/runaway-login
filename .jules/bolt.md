@@ -1,0 +1,3 @@
+## 2026-11-02 - [Throttling Pointer Events]
+**Learning:** [When wrapping a vanilla DOM event handler in `requestAnimationFrame`, creating a synthetic event object containing only the required properties (`clientX`, `clientY`) ensures the necessary data is preserved without risking context loss or accessing nullified properties on the original event object after the event loop tick. However, ensure the handler only expects those specific properties.]
+**Action:** [When throttling event listeners, carefully check which properties of the event object the original handler uses before passing a synthetic object.]
