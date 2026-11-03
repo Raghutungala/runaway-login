@@ -57,7 +57,7 @@ function updateState() {
    RUNAWAY POSITION
 --------------------------------------- */
 
-function moveButton(event) {
+function moveButton(clientX, clientY) {
   if (!armed || reduceMotion || isTouchDevice) {
     return;
   }
@@ -69,11 +69,14 @@ function moveButton(event) {
     return;
   }
 
+  // OPTIMIZATION: getBoundingClientRect causes layout thrashing
+  // if called on every mouse move. It's now throttled by requestAnimationFrame
+  // in the event listeners.
   const zoneRect = zone.getBoundingClientRect();
   const buttonRect = button.getBoundingClientRect();
 
-  const pointerX = event.clientX - zoneRect.left;
-  const pointerY = event.clientY - zoneRect.top;
+  const pointerX = clientX - zoneRect.left;
+  const pointerY = clientY - zoneRect.top;
 
   const buttonCenterX =
     buttonRect.left - zoneRect.left + buttonRect.width / 2;
@@ -178,7 +181,7 @@ button.addEventListener('pointerdown', event => {
   event.preventDefault();
 
   if (!reduceMotion && !isTouchDevice) {
-    moveButton(event);
+    moveButton(event.clientX, event.clientY);
   }
 });
 
@@ -188,7 +191,7 @@ button.addEventListener('click', event => {
     event.stopPropagation();
 
     if (!reduceMotion && !isTouchDevice) {
-      moveButton(event);
+      moveButton(event.clientX, event.clientY);
     }
 
     return;
@@ -200,9 +203,27 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let moveTicking = false;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    if (!moveTicking) {
+      // ⚡ Bolt Performance Optimization:
+      // Throttle rapid pointermove events to the display refresh rate
+      // to reduce getBoundingClientRect layout thrashing calls.
+      // We extract clientX/clientY synchronously to prevent context loss.
+      const clientX = event.clientX;
+      const clientY = event.clientY;
+
+      window.requestAnimationFrame(() => {
+        moveButton(clientX, clientY);
+        moveTicking = false;
+      });
+
+      moveTicking = true;
+    }
+  },
   { passive: true }
 );
 
