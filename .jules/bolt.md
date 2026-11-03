@@ -1,0 +1,3 @@
+## 2026-11-03 - Layout Thrashing in Interactive Elements
+**Learning:** For elements that aggressively track cursor position (like the runaway button) and respond by translating their position, simply caching `getBoundingClientRect` isn't always viable because the element and cursor are constantly changing relative positions. Passing the original event context to `requestAnimationFrame` callbacks can result in stripped properties.
+**Action:** When throttling rapid events like `pointermove` to the display refresh rate (via `requestAnimationFrame`), extract the necessary properties (e.g., `clientX`, `clientY`) synchronously *before* the async callback to avoid event context loss, while still mitigating layout thrashing from `getBoundingClientRect` calls.
