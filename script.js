@@ -57,7 +57,7 @@ function updateState() {
    RUNAWAY POSITION
 --------------------------------------- */
 
-function moveButton(event) {
+function moveButton(clientX, clientY) {
   if (!armed || reduceMotion || isTouchDevice) {
     return;
   }
@@ -72,8 +72,8 @@ function moveButton(event) {
   const zoneRect = zone.getBoundingClientRect();
   const buttonRect = button.getBoundingClientRect();
 
-  const pointerX = event.clientX - zoneRect.left;
-  const pointerY = event.clientY - zoneRect.top;
+  const pointerX = clientX - zoneRect.left;
+  const pointerY = clientY - zoneRect.top;
 
   const buttonCenterX =
     buttonRect.left - zoneRect.left + buttonRect.width / 2;
@@ -178,7 +178,7 @@ button.addEventListener('pointerdown', event => {
   event.preventDefault();
 
   if (!reduceMotion && !isTouchDevice) {
-    moveButton(event);
+    moveButton(event.clientX, event.clientY);
   }
 });
 
@@ -188,7 +188,7 @@ button.addEventListener('click', event => {
     event.stopPropagation();
 
     if (!reduceMotion && !isTouchDevice) {
-      moveButton(event);
+      moveButton(event.clientX, event.clientY);
     }
 
     return;
@@ -200,9 +200,28 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let isTicking = false;
+let latestX = 0;
+let latestY = 0;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    // Always store the most recent coordinates so they aren't lost if the mouse stops.
+    latestX = event.clientX;
+    latestY = event.clientY;
+
+    if (!isTicking) {
+      // ⚡ Bolt Optimization: Use requestAnimationFrame to throttle the pointermove event.
+      // This prevents layout thrashing caused by rapid, continuous calls to getBoundingClientRect()
+      // in moveButton(), ensuring smooth performance even when the mouse moves very quickly.
+      window.requestAnimationFrame(() => {
+        moveButton(latestX, latestY);
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  },
   { passive: true }
 );
 
