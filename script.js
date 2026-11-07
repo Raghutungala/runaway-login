@@ -57,7 +57,7 @@ function updateState() {
    RUNAWAY POSITION
 --------------------------------------- */
 
-function moveButton(event) {
+function moveButton(clientX, clientY) {
   if (!armed || reduceMotion || isTouchDevice) {
     return;
   }
@@ -72,8 +72,8 @@ function moveButton(event) {
   const zoneRect = zone.getBoundingClientRect();
   const buttonRect = button.getBoundingClientRect();
 
-  const pointerX = event.clientX - zoneRect.left;
-  const pointerY = event.clientY - zoneRect.top;
+  const pointerX = clientX - zoneRect.left;
+  const pointerY = clientY - zoneRect.top;
 
   const buttonCenterX =
     buttonRect.left - zoneRect.left + buttonRect.width / 2;
@@ -178,7 +178,7 @@ button.addEventListener('pointerdown', event => {
   event.preventDefault();
 
   if (!reduceMotion && !isTouchDevice) {
-    moveButton(event);
+    moveButton(event.clientX, event.clientY);
   }
 });
 
@@ -188,7 +188,7 @@ button.addEventListener('click', event => {
     event.stopPropagation();
 
     if (!reduceMotion && !isTouchDevice) {
-      moveButton(event);
+      moveButton(event.clientX, event.clientY);
     }
 
     return;
@@ -200,9 +200,24 @@ button.addEventListener('click', event => {
    TRACK CURSOR
 --------------------------------------- */
 
+let isTicking = false;
+let currentClientX = 0;
+let currentClientY = 0;
+
 zone.addEventListener(
   'pointermove',
-  moveButton,
+  event => {
+    currentClientX = event.clientX;
+    currentClientY = event.clientY;
+
+    if (!isTicking) {
+      window.requestAnimationFrame(() => {
+        moveButton(currentClientX, currentClientY);
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  },
   { passive: true }
 );
 
