@@ -1,0 +1,4 @@
+
+## 2026-11-09 - Pointer Event Throttling and Layout Thrashing
+**Learning:** Frequent `pointermove` events paired with heavy DOM layout queries (like `getBoundingClientRect` on multiple elements) cause severe layout thrashing (synchronous reflows). Throttling with `requestAnimationFrame` is highly effective here. However, when replacing direct event callbacks with a throttled async callback, the browser's native `Event` object loses its properties context (or is cleared) before `requestAnimationFrame` fires.
+**Action:** When wrapping vanilla DOM event handlers in asynchronous callbacks like `requestAnimationFrame`, extract necessary properties (e.g., `clientX`, `clientY`) synchronously into variables beforehand and use those variables in the async callback. Furthermore, update these tracking variables outside the `pendingPointerEvent` block on every tick so the final mouse position isn't dropped if the user stops moving before the next frame.
